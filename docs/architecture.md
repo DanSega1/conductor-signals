@@ -33,7 +33,29 @@ AI Query Layer (LLM summarizes, does NOT discover facts)
 Notifications (Discord / Telegram / Email)
 ```
 
-## Storage Strategy
+## Storage Layer
+
+The storage layer provides an abstract interface (`AbstractRepository`) implemented by `DuckDBRepository`.
+
+### Architecture
+
+```
+app/storage/
+  base.py         — AbstractRepository ABC
+  duckdb.py       — DuckDBRepository implementation
+  migrations.py   — Versioned schema migrations
+  repository.py   — Alias for DuckDBRepository
+```
+
+### Migrations
+
+Migrations are versioned, idempotent SQL steps stored in `migrations.py`. On connect, `DuckDBRepository` checks a `_migrations` table and applies any pending migrations.
+
+Current migrations:
+- **v1**: Create `observations` and `insights` tables with indexes
+- **v2**: Create `features` table for normalized feature storage
+
+### Storage Strategy
 
 | Layer | Retention | Format |
 |-------|-----------|--------|
@@ -41,6 +63,12 @@ Notifications (Discord / Telegram / Email)
 | Observations | Forever | DuckDB / Parquet |
 | Derived metrics | Forever | Parquet |
 | Insights | Forever | DuckDB / Parquet |
+
+### Key Classes
+
+- `AbstractRepository` — ABC with `store_observation`, `get_observations`, `get_timeline`, `query_sql`, `store_parquet`, `read_parquet`, `close`
+- `DuckDBRepository` — DuckDB-backed implementation with schema migrations
+- `Repository` — Convenience alias for `DuckDBRepository`
 
 ## Key Principles
 

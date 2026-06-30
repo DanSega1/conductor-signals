@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 from pytest import TempPathFactory
 
-from app.storage import Repository
+from app.storage import DuckDBRepository, Repository
 
 
 @pytest.fixture
@@ -16,6 +16,6 @@ def db_path(tmp_path_factory: TempPathFactory) -> Path:
 
 @pytest.fixture
 def repo(db_path: Path) -> Generator[Repository]:
-    repository = Repository(db_path)
+    repository: Repository = DuckDBRepository(db_path)
     yield repository
     repository.close()
