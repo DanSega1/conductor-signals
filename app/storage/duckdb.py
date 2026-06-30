@@ -81,6 +81,33 @@ class DuckDBRepository(AbstractRepository):
         )
         return observation
 
+    def get_insights(
+        self,
+        limit: int = 50,
+        offset: int = 0,
+    ) -> list[Insight]:
+        rows = self._conn.execute(
+            "SELECT id, title, description, source, confidence, timestamp, metadata "
+            "FROM insights ORDER BY timestamp DESC LIMIT ? OFFSET ?",
+            [limit, offset],
+        ).fetchall()
+        return [self._row_to_insight(row) for row in rows]
+
+    @staticmethod
+    def _row_to_insight(row: tuple[Any, ...]) -> Insight:
+        metadata: dict[str, Any] = {}
+        if row[6] is not None:
+            metadata = json.loads(row[6]) if isinstance(row[6], str) else row[6]
+        return Insight(
+            id=row[0],
+            title=row[1],
+            description=row[2],
+            source=row[3],
+            confidence=row[4],
+            timestamp=row[5],
+            metadata=metadata,
+        )
+
     def store_insight(self, data: InsightCreate) -> Insight:
         insight = Insight(
             id=str(uuid4()),

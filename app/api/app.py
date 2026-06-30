@@ -7,6 +7,7 @@ from datetime import UTC, datetime
 from fastapi import Depends, FastAPI
 from fastapi.responses import JSONResponse
 
+from app.api.routers import analytics_router, insights_router
 from app.logging import configure_logging, logger
 from app.storage import Repository
 
@@ -26,6 +27,9 @@ app = FastAPI(
     description="Personal observability platform built on Conductor Engine",
     lifespan=lifespan,
 )
+
+app.include_router(analytics_router)
+app.include_router(insights_router)
 
 
 def get_repository() -> Repository:
@@ -49,9 +53,7 @@ def get_timeline(
     repo: Repository = Depends(get_repository),  # noqa: B008
 ) -> JSONResponse:
     observations = repo.get_timeline(limit=limit)
-    return JSONResponse(
-        content=[obs.model_dump(mode="json") for obs in observations]
-    )
+    return JSONResponse(content=[obs.model_dump(mode="json") for obs in observations])
 
 
 @app.get("/observations")
@@ -65,6 +67,4 @@ def get_observations(
     observations = repo.get_observations(
         source=source, entity=entity, limit=limit, offset=offset
     )
-    return JSONResponse(
-        content=[obs.model_dump(mode="json") for obs in observations]
-    )
+    return JSONResponse(content=[obs.model_dump(mode="json") for obs in observations])

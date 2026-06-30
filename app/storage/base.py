@@ -17,6 +17,13 @@ class AbstractRepository(ABC):
     def store_insight(self, data: InsightCreate) -> Insight: ...
 
     @abstractmethod
+    def get_insights(
+        self,
+        limit: int = 50,
+        offset: int = 0,
+    ) -> list[Insight]: ...
+
+    @abstractmethod
     def get_observations(
         self,
         source: str | None = None,
