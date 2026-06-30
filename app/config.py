@@ -11,7 +11,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         env_prefix="OBSERVATORY_",
-        frozen=True,
+
     )
 
     data_dir: Path = Path("data")
@@ -38,6 +38,26 @@ class Settings(BaseSettings):
     collector_weather_enabled: bool = False
     collector_homeassistant_enabled: bool = False
     collector_hardcover_enabled: bool = False
+
+    fitbit_client_id: str = ""
+    fitbit_client_secret: str = ""
+
+    calendar_client_id: str = ""
+    calendar_client_secret: str = ""
+    calendar_id: str = "primary"
+
+    spotify_client_id: str = ""
+    spotify_client_secret: str = ""
+
+    weather_api_key: str = ""
+    weather_lat: float = 0.0
+    weather_lon: float = 0.0
+    weather_units: str = "metric"
+
+    hardcover_api_key: str = ""
+
+    homeassistant_url: str = ""
+    homeassistant_token: str = ""
 
 
 settings = Settings()

@@ -10,7 +10,7 @@ import duckdb
 import polars as pl
 
 from app.config import settings
-from app.schemas import Observation, ObservationCreate
+from app.schemas import Insight, InsightCreate, Observation, ObservationCreate
 from app.storage.base import AbstractRepository
 from app.storage.migrations import MIGRATIONS
 
@@ -80,6 +80,34 @@ class DuckDBRepository(AbstractRepository):
             ],
         )
         return observation
+
+    def store_insight(self, data: InsightCreate) -> Insight:
+        insight = Insight(
+            id=str(uuid4()),
+            title=data.title,
+            description=data.description,
+            source=data.source,
+            confidence=data.confidence,
+            timestamp=data.timestamp,
+            metadata={**data.metadata, "stored_at": datetime.now(UTC).isoformat()},
+        )
+        self._conn.execute(
+            """
+            INSERT OR REPLACE INTO insights
+            (id, title, description, source, confidence, timestamp, metadata)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            [
+                insight.id,
+                insight.title,
+                insight.description,
+                insight.source,
+                insight.confidence,
+                insight.timestamp,
+                insight.metadata,
+            ],
+        )
+        return insight
 
     def get_observations(
         self,

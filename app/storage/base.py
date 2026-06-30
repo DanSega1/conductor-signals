@@ -6,12 +6,15 @@ from pathlib import Path
 
 import polars as pl
 
-from app.schemas import Observation, ObservationCreate
+from app.schemas import Insight, InsightCreate, Observation, ObservationCreate
 
 
 class AbstractRepository(ABC):
     @abstractmethod
     def store_observation(self, data: ObservationCreate) -> Observation: ...
+
+    @abstractmethod
+    def store_insight(self, data: InsightCreate) -> Insight: ...
 
     @abstractmethod
     def get_observations(

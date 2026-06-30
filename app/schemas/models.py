@@ -38,6 +38,15 @@ class Feature(BaseModel):
     timestamp: datetime = Field(description="When the observation occurred")
 
 
+class InsightCreate(BaseModel):
+    title: str = Field(description="Short human-readable title")
+    description: str = Field(description="Detailed explanation")
+    source: str = Field(description="What generated this insight")
+    confidence: float = Field(ge=0.0, le=1.0, description="Confidence score 0-1")
+    timestamp: datetime = Field(description="When the insight was generated")
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
 class Insight(BaseModel):
     id: str = Field(description="Unique identifier for the insight")
     title: str = Field(description="Short human-readable title")
