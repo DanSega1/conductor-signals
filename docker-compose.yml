@@ -1,0 +1,14 @@
+services:
+  observatory:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data
+      - ./.env:/app/.env:ro
+    environment:
+      - OBSERVATORY_LOG_LEVEL=${OBSERVATORY_LOG_LEVEL:-INFO}
+      - OBSERVATORY_LOG_JSON=${OBSERVATORY_LOG_JSON:-false}
+    restart: unless-stopped
