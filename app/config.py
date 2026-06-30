@@ -29,6 +29,9 @@ class Settings(BaseSettings):
     llm_api_key: str | None = None
     llm_model: str | None = None
 
+    conductor_workdir: str = "conductor"
+    conductor_task_store: Literal["local", "sqlite"] = "local"
+
     collector_fitbit_enabled: bool = False
     collector_calendar_enabled: bool = False
     collector_spotify_enabled: bool = False

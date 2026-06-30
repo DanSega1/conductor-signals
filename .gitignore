@@ -40,7 +40,8 @@ logs/
 
 # DuckDB
 *.db
-*.wal
+*.duckdb
+*.db.wal
 
 # Coverage
 htmlcov/

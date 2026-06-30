@@ -19,3 +19,4 @@ def repo(db_path: Path) -> Generator[Repository]:
     repository: Repository = DuckDBRepository(db_path)
     yield repository
     repository.close()
+
