@@ -42,7 +42,7 @@ class InsightGenerator:
 
     def _build_context(self) -> dict[str, list[dict[str, object]]]:
         return {
-            "current": self._analytics.recent_observations(limit=50),
+            "current": self._analytics.recent_observations(limit=50).to_dicts(),
             "previous": self._period_observations(7, 14),
             "year_over_year": self._year_over_year_samples(),
             "recurring": self._recurring_samples(),

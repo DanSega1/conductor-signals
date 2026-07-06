@@ -5,9 +5,10 @@ from contextlib import asynccontextmanager
 from datetime import UTC, datetime
 
 from fastapi import Depends, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api.routers import analytics_router, insights_router
+from app.api.routers import analytics_router, chat_router, insights_router
 from app.logging import configure_logging, logger
 from app.storage import Repository
 
@@ -28,8 +29,17 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(analytics_router)
 app.include_router(insights_router)
+app.include_router(chat_router)
 
 
 def get_repository() -> Repository:

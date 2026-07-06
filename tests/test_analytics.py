@@ -96,6 +96,6 @@ def test_recurring_patterns(seeded_repo: DuckDBRepository) -> None:
 def test_recent_observations(seeded_repo: DuckDBRepository) -> None:
     engine = AnalyticsEngine(seeded_repo)
     result = engine.recent_observations(limit=10)
-    assert isinstance(result, list)
-    assert len(result) > 0
-    assert "source" in result[0]
+    assert isinstance(result, pl.DataFrame)
+    assert result.height > 0
+    assert "source" in result.columns

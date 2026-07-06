@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+
 import polars as pl
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
@@ -20,8 +22,18 @@ def get_engine(
     return AnalyticsEngine(repo)
 
 
+def _try_parse(val: object) -> object:
+    if isinstance(val, str):
+        try:
+            return json.loads(val)
+        except (json.JSONDecodeError, ValueError):
+            return val
+    return val
+
+
 def _df_response(df: pl.DataFrame) -> JSONResponse:
-    return JSONResponse(content=df.to_dicts())
+    rows = [{k: _try_parse(v) for k, v in row.items()} for row in df.to_dicts()]
+    return JSONResponse(content=json.loads(json.dumps(rows, default=str)))
 
 
 @router.get("/comparison")
@@ -56,4 +68,4 @@ def recent_observations(
     limit: int = 50,
     engine: AnalyticsEngine = Depends(get_engine),  # noqa: B008
 ) -> JSONResponse:
-    return JSONResponse(content=engine.recent_observations(limit))
+    return _df_response(engine.recent_observations(limit))

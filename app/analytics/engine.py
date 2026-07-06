@@ -1,8 +1,14 @@
 from __future__ import annotations
 
+import re
+
 import polars as pl
 
 from app.storage import Repository
+
+
+def _safe(name: str) -> str:
+    return re.sub(r"[^a-zA-Z0-9_\-.$]", "", name)
 
 
 class AnalyticsEngine:
@@ -17,9 +23,9 @@ class AnalyticsEngine:
     ) -> pl.DataFrame:
         filters = ["1=1"]
         if source:
-            filters.append(f"source = '{source}'")
+            filters.append(f"source = '{_safe(source)}'")
         if entity:
-            filters.append(f"entity = '{entity}'")
+            filters.append(f"entity = '{_safe(entity)}'")
         where = " AND ".join(filters)
         sql = f"""
             SELECT
@@ -36,6 +42,7 @@ class AnalyticsEngine:
         return self._query(sql)
 
     def period_comparison(self, entity: str, days: int = 7) -> pl.DataFrame:
+        safe_entity = _safe(entity)
         sql = f"""
             SELECT
                 'current' AS period,
@@ -43,7 +50,7 @@ class AnalyticsEngine:
                 features,
                 metadata
             FROM observations
-            WHERE entity = '{entity}'
+            WHERE entity = '{safe_entity}'
               AND timestamp >= CURRENT_TIMESTAMP - INTERVAL '{days}' DAY
 
             UNION ALL
@@ -54,7 +61,7 @@ class AnalyticsEngine:
                 features,
                 metadata
             FROM observations
-            WHERE entity = '{entity}'
+            WHERE entity = '{safe_entity}'
               AND timestamp >= CURRENT_TIMESTAMP - INTERVAL '{2 * days}' DAY
               AND timestamp < CURRENT_TIMESTAMP - INTERVAL '{days}' DAY
             ORDER BY date DESC
@@ -62,36 +69,40 @@ class AnalyticsEngine:
         return self._query(sql)
 
     def year_over_year(self, entity: str, feature: str) -> pl.DataFrame:
+        safe_entity = _safe(entity)
+        safe_feat = _safe(feature)
         sql = f"""
             SELECT
                 EXTRACT(MONTH FROM timestamp) AS month,
                 EXTRACT(DAY FROM timestamp) AS day,
                 EXTRACT(YEAR FROM timestamp) AS year,
-                features->>'$.{feature}' AS {feature}
+                features->>'$.{safe_feat}' AS {safe_feat}
             FROM observations
-            WHERE entity = '{entity}'
-              AND json_type(features, '$.{feature}') != 'NULL'
+            WHERE entity = '{safe_entity}'
+              AND json_type(features, '$.{safe_feat}') != 'NULL'
             ORDER BY year, month, day
         """
         return self._query(sql)
 
     def recurring_patterns(self, entity: str, feature: str) -> pl.DataFrame:
+        safe_entity = _safe(entity)
+        safe_feat = _safe(feature)
         sql = f"""
             SELECT
                 EXTRACT(MONTH FROM timestamp) AS month,
                 EXTRACT(DOW FROM timestamp) AS day_of_week,
-                AVG(CAST(features->>'$.{feature}' AS DOUBLE)) AS avg_value,
+                AVG(CAST(features->>'$.{safe_feat}' AS DOUBLE)) AS avg_value,
                 COUNT(*) AS sample_count
             FROM observations
-            WHERE entity = '{entity}'
-              AND json_type(features, '$.{feature}') != 'NULL'
+            WHERE entity = '{safe_entity}'
+              AND json_type(features, '$.{safe_feat}') != 'NULL'
             GROUP BY month, day_of_week
             ORDER BY month, day_of_week
         """
         return self._query(sql)
 
-    def recent_observations(self, limit: int = 50) -> list[dict[str, object]]:
-        df = self._query(
+    def recent_observations(self, limit: int = 50) -> pl.DataFrame:
+        return self._query(
             f"""
             SELECT timestamp, source, category, entity, features, metadata
             FROM observations
@@ -99,4 +110,3 @@ class AnalyticsEngine:
             LIMIT {limit}
             """
         )
-        return df.to_dicts()

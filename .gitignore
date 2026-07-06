@@ -43,6 +43,10 @@ logs/
 *.duckdb
 *.db.wal
 
+# Dashboard / Node
+dashboard/node_modules/
+dashboard/dist/
+
 # Coverage
 htmlcov/
 .coverage
