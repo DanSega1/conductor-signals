@@ -1,6 +1,6 @@
 from app.collectors.base import CollectorCapability, CollectorInput
 from app.collectors.calendar import CalendarCollector
-from app.collectors.fitbit import FitbitCollector
+from app.collectors.google_health import GoogleHealthCollector
 from app.collectors.hardcover import HardcoverCollector
 from app.collectors.homeassistant import HomeAssistantCollector
 from app.collectors.oauth import OAuth2Client, OAuthTokenStore
@@ -13,7 +13,7 @@ __all__ = [
     "CollectorCapability",
     "CollectorInput",
     "CollectorRegistry",
-    "FitbitCollector",
+    "GoogleHealthCollector",
     "HardcoverCollector",
     "HomeAssistantCollector",
     "OAuth2Client",

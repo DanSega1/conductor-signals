@@ -32,15 +32,15 @@ class Settings(BaseSettings):
     conductor_workdir: str = "conductor"
     conductor_task_store: Literal["local", "sqlite"] = "local"
 
-    collector_fitbit_enabled: bool = False
+    collector_google_health_enabled: bool = False
     collector_calendar_enabled: bool = False
     collector_spotify_enabled: bool = False
     collector_weather_enabled: bool = False
     collector_homeassistant_enabled: bool = False
     collector_hardcover_enabled: bool = False
 
-    fitbit_client_id: str = ""
-    fitbit_client_secret: str = ""
+    google_client_id: str = ""
+    google_client_secret: str = ""
 
     calendar_client_id: str = ""
     calendar_client_secret: str = ""

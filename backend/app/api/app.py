@@ -8,7 +8,13 @@ from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api.routers import analytics_router, chat_router, insights_router, settings_router
+from app.api.routers import (
+    analytics_router,
+    auth_router,
+    chat_router,
+    insights_router,
+    settings_router,
+)
 from app.logging import configure_logging, logger
 from app.storage import Repository
 
@@ -41,6 +47,7 @@ app.include_router(analytics_router)
 app.include_router(insights_router)
 app.include_router(chat_router)
 app.include_router(settings_router)
+app.include_router(auth_router)
 
 
 def get_repository() -> Repository:

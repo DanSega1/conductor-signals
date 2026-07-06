@@ -65,4 +65,16 @@ export const api = {
       method: "PUT",
       body: JSON.stringify(body),
     }),
+
+  authStatus: () =>
+    request<import("../types").AuthStatus>("/auth/status"),
+
+  getIntegrations: () =>
+    request<import("../types").IntegrationsResponse>("/settings/integrations"),
+
+  updateIntegration: (source: string, values: Record<string, string>) =>
+    request<{ status: string }>(`/settings/integrations/${source}`, {
+      method: "PUT",
+      body: JSON.stringify({ values }),
+    }),
 };

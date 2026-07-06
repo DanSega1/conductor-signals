@@ -51,3 +51,31 @@ export interface LLMSettingsUpdate {
   model: string;
   base_url: string;
 }
+
+export interface AuthStatus {
+  providers: Record<string, boolean>;
+}
+
+export interface IntegrationFieldDef {
+  key: string;
+  label: string;
+  type: string;
+  placeholder: string;
+  options: string[] | null;
+  required: boolean;
+  configured: boolean;
+}
+
+export interface IntegrationDef {
+  source: string;
+  label: string;
+  auth_type: string;
+  doc_url: string;
+  fields: IntegrationFieldDef[];
+  oauth_scopes: string;
+  connected: boolean;
+}
+
+export interface IntegrationsResponse {
+  integrations: IntegrationDef[];
+}
