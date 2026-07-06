@@ -5,6 +5,7 @@ import Timeline from "./pages/Timeline";
 import Insights from "./pages/Insights";
 import Analytics from "./pages/Analytics";
 import Chat from "./pages/Chat";
+import Settings from "./pages/Settings";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/insights" element={<Insights />} />
         <Route path="/analytics" element={<Analytics />} />
         <Route path="/chat" element={<Chat />} />
+        <Route path="/settings" element={<Settings />} />
       </Routes>
     </Layout>
   );

@@ -24,6 +24,14 @@ class CollectorInput(BaseModel):
 class CollectorCapability(Capability):  # type: ignore[misc]
     input_model = CollectorInput
 
+    def __init_subclass__(cls, **kwargs: Any) -> None:
+        super().__init_subclass__(**kwargs)
+        source = cls.__dict__.get("collector_source", "")
+        if source:
+            from app.collectors.registry import CollectorRegistry
+
+            CollectorRegistry.register(cls)
+
     def __init__(
         self,
         repository: AbstractRepository,

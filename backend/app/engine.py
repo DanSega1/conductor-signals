@@ -7,15 +7,8 @@ from engine.loader import load_builtin_capabilities
 from engine.runtime.store import LocalTaskStore
 from engine.supervisor.service import TaskSupervisor
 
-from app.collectors import (
-    CalendarCollector,
-    CollectorCapability,
-    FitbitCollector,
-    HardcoverCollector,
-    HomeAssistantCollector,
-    SpotifyCollector,
-    WeatherCollector,
-)
+from app.collectors import CollectorCapability
+from app.collectors.registry import CollectorRegistry
 from app.config import settings
 from app.logging import logger
 
@@ -43,6 +36,12 @@ class ConductorEngine:
         self._store = store
         self._supervisor = supervisor
         self._workdir = workdir
+
+        plugin_dir = Path(__file__).parent / "collectors" / "plugins"
+        discovered = CollectorRegistry.discover_plugins(plugin_dir)
+        if discovered:
+            logger.info("plugins_discovered", count=discovered)
+
         self._register_enabled_collectors()
 
     @property
@@ -62,31 +61,6 @@ class ConductorEngine:
         return instance
 
     def _register_enabled_collectors(self) -> None:
-        collectors: list[type[CollectorCapability]] = []
-
-        if settings.collector_weather_enabled:
-            collectors.append(WeatherCollector)
-            logger.info("collector_enabled", source="weather")
-
-        if settings.collector_hardcover_enabled:
-            collectors.append(HardcoverCollector)
-            logger.info("collector_enabled", source="hardcover")
-
-        if settings.collector_spotify_enabled:
-            collectors.append(SpotifyCollector)
-            logger.info("collector_enabled", source="spotify")
-
-        if settings.collector_calendar_enabled:
-            collectors.append(CalendarCollector)
-            logger.info("collector_enabled", source="calendar")
-
-        if settings.collector_fitbit_enabled:
-            collectors.append(FitbitCollector)
-            logger.info("collector_enabled", source="fitbit")
-
-        if settings.collector_homeassistant_enabled:
-            collectors.append(HomeAssistantCollector)
-            logger.info("collector_enabled", source="home_assistant")
-
-        for collector_class in collectors:
-            self.register_collector(collector_class)
+        for source, collector_cls in CollectorRegistry.enabled_collectors(settings).items():
+            logger.info("collector_enabled", source=source)
+            self.register_collector(collector_cls)

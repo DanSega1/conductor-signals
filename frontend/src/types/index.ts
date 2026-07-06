@@ -36,3 +36,18 @@ export interface ChatResponse {
 export interface AnalyticsRow {
   [key: string]: unknown;
 }
+
+export interface LLMSettings {
+  provider: string;
+  api_key: string;
+  model: string;
+  base_url: string;
+  available_providers: string[];
+}
+
+export interface LLMSettingsUpdate {
+  provider: string;
+  api_key: string;
+  model: string;
+  base_url: string;
+}

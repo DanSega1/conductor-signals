@@ -56,4 +56,13 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ message }),
     }),
+
+  getLLMSettings: () =>
+    request<import("../types").LLMSettings>("/settings/llm"),
+
+  updateLLMSettings: (body: import("../types").LLMSettingsUpdate) =>
+    request<import("../types").LLMSettingsUpdate>("/settings/llm", {
+      method: "PUT",
+      body: JSON.stringify(body),
+    }),
 };
