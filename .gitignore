@@ -9,11 +9,16 @@ build/
 venv/
 
 # Data
-data/raw/*/*
-data/derived/*/*
-data/analytics/*
-data/insights/*
-!data/**/.gitkeep
+backend/data/raw/*/*
+backend/data/derived/*/*
+backend/data/analytics/*
+backend/data/insights/*
+!backend/data/**/.gitkeep
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/tsconfig.tsbuildinfo
 
 # IDE
 .idea/
@@ -25,9 +30,6 @@ data/insights/*
 # OS
 .DS_Store
 Thumbs.db
-
-# Docker
-docker/data/
 
 # Environment
 .env
@@ -42,10 +44,6 @@ logs/
 *.db
 *.duckdb
 *.db.wal
-
-# Dashboard / Node
-dashboard/node_modules/
-dashboard/dist/
 
 # Coverage
 htmlcov/
